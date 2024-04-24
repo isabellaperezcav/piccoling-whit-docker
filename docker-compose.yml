@@ -1,0 +1,42 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+
+  usuarios:
+    build: ./microUsuarios
+    links: 
+      - db
+    ports:
+      - "3001:3001"
+
+  inventario:
+    build: ./microInventario
+    links: 
+      - db
+    ports:
+      - "3002:3002"
+
+  facturas:
+    build: ./microFacturas
+    links:
+      - db
+    ports:
+      - "3003:3003"
+
+  web:
+    build: ./webPiccoling
+    links:
+      - usuarios
+      - inventario
+      - facturas
+    ports:
+      - "2080:80"
+
+  
