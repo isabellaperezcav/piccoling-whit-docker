@@ -65,7 +65,7 @@ if ($us == "") {
         </thead>
         <tbody>
             <?php
-            $servurl = "http://192.168.100.4:3003/facturas";
+            $servurl = "http://facturas:3003/facturas";
             $curl = curl_init($servurl);
 
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

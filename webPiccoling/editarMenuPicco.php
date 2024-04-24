@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cantidad_edit = $_POST["cantidad_edit"];
 
     // URL de la solicitud PUT para editar el menú
-    $url = 'http://192.168.100.4:3002/menu/'.$menu_id_edit;
+    $url = 'http://inventario:3002/menu/'.$menu_id_edit;
 
     // Datos que se enviarán en la solicitud PUT
     $data = array(

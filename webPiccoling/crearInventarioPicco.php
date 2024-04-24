@@ -3,7 +3,7 @@
     $cantidad_disponible=$_POST["cantidad_disponible"];
 
     // URL de la solicitud POST
-    $url = 'http://192.168.100.4:3002/inventario';
+    $url = 'http://inventario:3002/inventario';
 
     // Datos que se enviarán en la solicitud POST
     $data = array(

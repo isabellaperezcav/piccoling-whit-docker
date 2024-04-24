@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_inventario']) && is
     // Validar y sanitizar los datos aquí si es necesario...
 
     // URL de la solicitud PUT para actualizar el inventario
-    $url = 'http://192.168.100.4:3002/inventario/' . $id_ingrediente;
+    $url = 'http://inventario:3002/inventario/' . $id_ingrediente;
 
     // Datos que se enviarán en la solicitud PUT
     $data = array(

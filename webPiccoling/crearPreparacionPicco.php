@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $inventario_id = $_POST["inventario_id"];
 
     // URL de la solicitud POST para crear preparación
-    $url = 'http://192.168.100.4:3002/preparacion';
+    $url = 'http://inventario:3002/preparacion';
 
     // Datos que se enviarán en la solicitud POST
     $data = array(

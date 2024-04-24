@@ -64,7 +64,7 @@ if ($us == "") {
         </thead>
         <tbody>
             <?php
-            $servurl = "http://192.168.100.4:3002/preparacion";
+            $servurl = "http://inventario:3002/preparacion";
             $curl = curl_init($servurl);
 
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -116,7 +116,7 @@ if ($us == "") {
                             <select name="menu_id" class="form-control" id="menu_id">
                                 <?php
                                 // Obtener opciones para el menú desde la API
-                                $menuUrl = "http://192.168.100.4:3002/menu";
+                                $menuUrl = "http://inventario:3002/menu";
                                 $menuJson = file_get_contents($menuUrl);
                                 $menuData = json_decode($menuJson);
 
@@ -132,7 +132,7 @@ if ($us == "") {
                             <select name="inventario_id" class="form-control" id="inventario_id">
                                 <?php
                                 // Obtener opciones para el inventario desde la API
-                                $inventarioUrl = "http://192.168.100.4:3002/inventario";
+                                $inventarioUrl = "http://inventario:3002/inventario";
                                 $inventarioJson = file_get_contents($inventarioUrl);
                                 $inventarioData = json_decode($inventarioJson);
 

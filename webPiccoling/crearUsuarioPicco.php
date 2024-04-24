@@ -5,7 +5,7 @@
     $clave=$_POST["clave"];
 
     // URL de la solicitud POST
-    $url = 'http://192.168.100.4:3001/usuarios';
+    $url = 'http://usuarios:3001/usuarios';
 
     // Datos que se enviarán en la solicitud POST
     $data = array(

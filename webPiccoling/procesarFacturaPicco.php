@@ -20,7 +20,7 @@ $json = json_encode($facturas);
 //echo $json;
 
 
-$url = 'http://192.168.100.4:3003/facturas';
+$url = 'http://facturas:3003/facturas';
 
 // Inicializar cURL
 $ch = curl_init();

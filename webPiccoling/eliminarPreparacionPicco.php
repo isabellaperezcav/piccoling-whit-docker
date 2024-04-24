@@ -4,7 +4,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $preparacionId = $_GET['id'];
 
     // URL de la solicitud DELETE para eliminar la preparación
-    $url = 'http://192.168.100.4:3002/preparacion/' . $preparacionId;
+    $url = 'http://inventario:3002/preparacion/' . $preparacionId;
 
     // Inicializar cURL
     $ch = curl_init();
