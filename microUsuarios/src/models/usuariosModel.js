@@ -1,10 +1,11 @@
 const mysql = require('mysql2/promise');
 
 const connection = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '', 
-  database: 'piccoling' 
+    host: 'db',
+    port: '3306',
+    user: 'root',
+    password: 'root',
+    database: 'piccoling'
 });
 
 async function traerUsuarios() {
