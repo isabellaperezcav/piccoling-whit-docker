@@ -17,7 +17,7 @@ CREATE TABLE inventario (
 );
 
 CREATE TABLE menu (
-    id_menu int auto_increment,
+    id_menu INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100),
     precio DECIMAL(10,2),
     cantidad INT(11)
