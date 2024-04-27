@@ -9,6 +9,15 @@ CREATE TABLE facturas (
     fecha DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE usuarios (
+  nombrecompleto VARCHAR(90),
+  correo VARCHAR(80),
+  usuario VARCHAR(15) PRIMARY KEY,
+  clave VARCHAR(50)
+);
+
+INSERT INTO usuarios (nombrecompleto, correo, usuario, clave) VALUES ('Administrador', 'administrador@piccoling.com', 'admin', '1234');
+
 CREATE TABLE inventario (
   id_inventario INT AUTO_INCREMENT,
   ingrediente VARCHAR(100),
@@ -31,11 +40,3 @@ CREATE TABLE preparacion (
     FOREIGN KEY (inventario_id) REFERENCES inventario(id_inventario)
 ) ENGINE=InnoDB;
 
-CREATE TABLE usuarios (
-  nombrecompleto VARCHAR(90),
-  correo VARCHAR(80),
-  usuario VARCHAR(15) PRIMARY KEY,
-  clave VARCHAR(50)
-);
-
-INSERT INTO usuarios (nombrecompleto, correo, usuario, clave) VALUES ('Administrador', 'administrador@piccoling.com', 'admin', '1234');
