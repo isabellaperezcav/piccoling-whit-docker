@@ -128,9 +128,9 @@ router.get('/preparacion', async (req, res) => {
     res.json(result);
 });
 
-router.get('/preparacion/:preparacion_id', async (req, res) => {
-    const { preparacion_id } = req.params;
-    const result = await productosModel.traerPreparacion(preparacion_id);
+router.get('/preparacion/:preparacionid', async (req, res) => {
+    const { preparacionid } = req.params;
+    const result = await productosModel.traerPreparacion(preparacionid);
     res.json(result[0]);
 });
 
@@ -165,9 +165,9 @@ router.put('/inventario/:id_inventario', async (req, res) => {
     }
 });
 
-router.delete('/preparacion/:preparacion_id', async (req, res) => {
-    const { preparacion_id } = req.params;
-    await productosModel.eliminarPreparacion(preparacion_id);
+router.delete('/preparacion/:preparacionid', async (req, res) => {
+    const { preparacionid } = req.params;
+    await productosModel.eliminarPreparacion(preparacionid);
     res.send("Preparación eliminada exitosamente");
 });
 

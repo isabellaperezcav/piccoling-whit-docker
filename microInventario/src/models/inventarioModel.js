@@ -80,8 +80,8 @@ async function traerpreparacion() {
     return result[0];
 }
 
-async function traerPreparacion(preparacion_id) {
-    const result = await connection.query('SELECT * FROM preparacion WHERE preparacion_id = ?', [preparacion_id]);
+async function traerPreparacion(preparacionid) {
+    const result = await connection.query('SELECT * FROM preparacion WHERE preparacionid = ?', [preparacionid]);
     return result[0];
 }
 
@@ -90,13 +90,13 @@ async function agregarPreparacion(menuId, inventarioId) {
     return result;
 }
 
-async function actualizarPreparacion(preparacionId, menuId, inventarioId) {
-    const result = await connection.query('UPDATE preparacion SET menu_id = ?, inventario_id = ? WHERE preparacion_id = ?', [menuId, inventarioId, preparacionId]);
+async function actualizarPreparacion(preparacionid, menuId, inventarioId) {
+    const result = await connection.query('UPDATE preparacion SET menu_id = ?, inventario_id = ? WHERE preparacionid = ?', [menuId, inventarioId, preparacionid]);
     return result;
 }
 
-async function eliminarPreparacion(preparacionId) {
-    const result = await connection.query('DELETE FROM preparacion WHERE preparacion_id = ?', [preparacionId]);
+async function eliminarPreparacion(preparacionid) {
+    const result = await connection.query('DELETE FROM preparacion WHERE preparacionid = ?', [preparacionid]);
     return result;
 }
 
