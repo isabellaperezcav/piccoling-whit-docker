@@ -80,7 +80,7 @@ if ($us == "") {
             $long = count($resp);
             for ($i = 0; $i < $long; $i++) {
                 $dec = $resp[$i];
-                $id = $dec->preparacion_id;
+                $id = $dec->preparacionid;
                 $id_menu = $dec->menu_id;
                 $id_inventario = $dec->inventario_id;
 
@@ -155,11 +155,11 @@ if ($us == "") {
         </div>
 
         <script>
-            function eliminarPreparacion(preparacionId) {
+            function eliminarPreparacion(preparacionid) {
                 if (confirm("¿Estás seguro de eliminar esta preparación?")) {
                     // Aquí puedes hacer una solicitud AJAX para eliminar la preparación
                     // Por simplicidad, redirigimos a un archivo PHP que manejará la eliminación
-                    window.location.href = "eliminarPreparacionPicco.php?id=" + preparacionId;
+                    window.location.href = "eliminarPreparacionPicco.php?id=" + preparacionid;
                 }
             }
         </script>
