@@ -1,7 +1,7 @@
 <?php
 // Verificar si se ha proporcionado un ID válido para eliminar
 if (isset($_GET['id']) && !empty($_GET['id'])) {
-    $preparacionId = $_GET['id'];
+    $reparacionid = $_GET['id'];
 
     // URL de la solicitud DELETE para eliminar la preparación
     $url = 'http://inventario:3002/preparacion/' . $preparacionid;

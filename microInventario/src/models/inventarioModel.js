@@ -74,7 +74,7 @@ async function eliminarPreparacionesPorInventario(idInventario) {
 
 
 
-// Funciones CRUD para preparacion directamente accesibles por los usuarios
+// Funciones CRUD para preparacion
 async function traerpreparacion() {
     const result = await connection.query('SELECT * FROM preparacion');
     return result[0];
