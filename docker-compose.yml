@@ -1,4 +1,6 @@
 version: '3'
+networks:
+  cluster_piccoling_default:
 services:
   db:
     image: mysql:5.7
@@ -10,29 +12,29 @@ services:
       - ./db:/docker-entrypoint-initdb.d/:ro
 
   usuarios:
-    build: ./microUsuarios
-    links: 
+    image: isabellaperezc/usuariopiccoling
+    depends_on: 
       - db
     ports:
       - "3001:3001"
 
   inventario:
-    build: ./microInventario
-    links: 
+    image: isabellaperezc/inventariopiccoling
+    depends_on: 
       - db
     ports:
       - "3002:3002"
 
   facturas:
-    build: ./microFacturas
-    links:
+    image: isabellaperezc/facturaspiccoling
+    depends_on:
       - db
     ports:
       - "3003:3003"
 
   web:
-    build: ./webPiccoling
-    links:
+    image: isabellaperezc/webpiccoling
+    depends_on:
       - usuarios
       - inventario
       - facturas
