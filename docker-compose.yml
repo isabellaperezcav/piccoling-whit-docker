@@ -2,6 +2,19 @@ version: '3'
 networks:
   cluster_piccoling_default:
 services:
+  haproxy:
+    image: isabellaperezc/haproxyprueba
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
+    init: true
+    depends_on:
+      - web1
+      - web2
+    ports:
+      - "5080:80"
+
   db:
     image: mysql:5.7
     ports:
@@ -60,6 +73,7 @@ services:
       placement:
         constraints:
           - node.hostname == clientePiccoling
+    init: true
   
   web2:
     image: isabellaperezc/webpiccoling
@@ -73,5 +87,6 @@ services:
       placement:
         constraints:
           - node.hostname == clientePiccoling
+    init: true
 
   
