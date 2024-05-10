@@ -10,6 +10,10 @@ services:
       MYSQL_ROOT_PASSWORD: piccoling
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
 
   usuarios:
     image: isabellaperezc/usuariopiccoling
@@ -17,6 +21,10 @@ services:
       - db
     ports:
       - "3001:3001"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
 
   inventario:
     image: isabellaperezc/inventariopiccoling
@@ -24,6 +32,10 @@ services:
       - db
     ports:
       - "3002:3002"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
 
   facturas:
     image: isabellaperezc/facturaspiccoling
@@ -31,8 +43,12 @@ services:
       - db
     ports:
       - "3003:3003"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
 
-  web:
+  web1:
     image: isabellaperezc/webpiccoling
     depends_on:
       - usuarios
@@ -40,5 +56,22 @@ services:
       - facturas
     ports:
       - "2080:80"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == clientePiccoling
+  
+  web2:
+    image: isabellaperezc/webpiccoling
+    depends_on:
+      - usuarios
+      - inventario
+      - facturas
+    ports:
+      - "2080:80"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == clientePiccoling
 
   
