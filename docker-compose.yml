@@ -82,7 +82,7 @@ services:
       - inventario
       - facturas
     ports:
-      - "2080:80"
+      - "2081:80"
     deploy:
       placement:
         constraints:
