@@ -144,120 +144,102 @@ SPARK_MASTER_HOST=192.168.100.4
 ## Configuración
 Para configurar el contenedor Docker del proyecto, es necesario conocer los archivos Dockerfile que se han utilizado para crear las imágenes del contenedor. Cuando se descargue dentro de la carpeta `piccoling-whit-docker`, tendremos las siguientes subcarpetas 
 
-`/bbs71_app` en donde se encuentran los archivos de toda la pagina como HTML, CSS y scripts, en `/bbs71_backend` tenemos todo lo relacionado con los microservicios y el apigateway y en `/bbs71_dockerfile` tenemos todos los archivos de la aplicacion incluido el docker-compose para hacer el despliegue, pero de aqui en adelante solo trabajaremos en el directorio de `bbs71_git/bbs71_docker` el cual contiene las subcarpetas donde estan los archivos necesario para la creacion de cada una de las imagenes del proyecto, las carpetas en cuestion son: `/db` correspondiende a la base de datos de mongodb, `/app` donde se encuentra todos los archivos de nuestra aplicacion web,`/backend` donde estan los microservicios, `/haproxy` donde esta nuestro balanceador, `/mqtt` el broker de mensajeria que usaremos, `/spark_app` donde estan los archivos que usaremos para el procesamiento de spark, dentro de cada carpeta se ha creado el Dockerfile que contienen las instrucciones para construir diferentes imágenes de Docker, cada una con su propia configuración y dependencias específicas. A continuación, se presentara una breve descripción y captura de cada uno de los Dockerfiles en sus repectivas carpetas utilizados en el proyecto.
+`webPiccoling` es la carpeta donde se encuentran los archivos de toda la pagina como HTML y PHP, en las carpetas que inician con`micro` tenemos todo lo relacionado con los microservicios y el apigateway, en la carpeta `db` tenemos lo correspondiente a la base de datos de sql, `/haproxy` donde esta nuestro balanceador, el archivo `docker-compose.yml` tenemos toda la configuracion para hacer el despliegue, 
+ `/piccodata` donde estan los archivos que usaremos para el procesamiento de spark; dentro de cada carpeta se ha creado el Dockerfile que contienen las instrucciones para construir diferentes imágenes de Docker, cada una con su propia configuración y dependencias específicas. A continuación, se presentara una breve descripción y captura de cada uno de los Dockerfiles en sus repectivas carpetas utilizados en el proyecto.
 
-### bbs71_docker:<br>
+### piccoling-whit-docker:<br>
 
-#### 1. Docker-compose principal<br>
+#### 1. Docker-compose.yml<br>
 Este es el docker-compose.yml principal, encargado de desplegar todos los servicios que necesitamos:<br>
 ```
-version: "3"
-
+version: '3'
+networks:
+  cluster_piccoling_default:
 services:
-  mongodb:
-    image: mongo:4.0
-    restart: always
-    volumes:
-      - ./db/mongo/data:/data/db
-      - ./db/flights.json:/json/flights.json
-      - ./db/users.json:/json/users.json
-    ports:
-      - 27017:27017
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == servidorUbuntu
-
-  api-gateway:
-    image: bbs71/api-gateway
-    ports:
-      - 3000:3000
-    links:
-      - microuser
-      - microairlines
-      - microairports
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == servidorUbuntu
-
-  microuser:
-    image: bbs71/micro-user
-    links:
-      - mongodb
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == servidorUbuntu
-
-  microairlines:
-    image: bbs71/micro-airlines
-    links:
-      - mongodb
-    depends_on:
-      - mqtt
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == servidorUbuntu
-
-  microairports:
-    image: bbs71/micro-airports
-    links:
-      - mongodb
-    depends_on:
-      - mqtt
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == servidorUbuntu
-
-  app-1:
-    image: bbs71/app
-    depends_on:
-      - api-gateway
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == clienteUbuntu
-
-  app-2:
-    image: bbs71/app
-    depends_on:
-      - api-gateway
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == clienteUbuntu
-
   haproxy:
-    image: bbs71/haproxy
-    ports:
-      - 1080:80
-    links:
-      - app-1
-      - app-2
+    image: isabellaperezc/haproxyprueba
     deploy:
       placement:
         constraints:
-          - node.hostname == servidorUbuntu
+          - node.hostname == servidorPiccoling
+    init: true
+    depends_on:
+      - web1
+      - web2
+    ports:
+      - "5080:80"
 
-  mqtt:
-    image: eclipse-mosquitto
-    restart: always
-    volumes:
-      - ./mqtt/mosquitto/config:/mosquitto/config
-      - ./mqtt/mosquitto/data:/mosquitto/data
-      - ./mqtt/mosquitto/log:/mosquitto/log
+  db:
+    image: mysql:5.7
     ports:
-      - 1883:1883
-      - 9001:9001  
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: piccoling
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
     deploy:
       placement:
         constraints:
-          - node.hostname == servidorUbuntu
+          - node.hostname == servidorPiccoling
+
+  usuarios:
+    image: isabellaperezc/usuariopiccoling
+    depends_on: 
+      - db
+    ports:
+      - "3001:3001"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
+
+  inventario:
+    image: isabellaperezc/inventariopiccoling
+    depends_on: 
+      - db
+    ports:
+      - "3002:3002"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
+
+  facturas:
+    image: isabellaperezc/facturaspiccoling
+    depends_on:
+      - db
+    ports:
+      - "3003:3003"
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == servidorPiccoling
+
+  web1:
+    image: isabellaperezc/webpiccoling
+    depends_on:
+      - usuarios
+      - inventario
+      - facturas
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == clientePiccoling
+    init: true
+  
+  web2:
+    image: isabellaperezc/webpiccoling
+    depends_on:
+      - usuarios
+      - inventario
+      - facturas
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == clientePiccoling
+    init: true
 ```
-En el docker-compose se definen las imagenes de cada uno de los servicios y los parametros que se van a usar, para este proyecto utilizamos los siguientes servicios:
+En el docker-compose se definen las imagenes de cada uno de los servicios y los parametros que se van a usar; para este proyecto utilizamos los siguientes servicios:
 
 #### 2. /db:
 
