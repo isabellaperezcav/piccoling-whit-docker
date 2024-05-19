@@ -136,11 +136,6 @@ SPARK_MASTER_HOST=192.168.100.4
 `sudo pip install pyspark`
 
 
-
-
-
-
-
 ## Configuración
 Para configurar el contenedor Docker del proyecto, es necesario conocer los archivos Dockerfile que se han utilizado para crear las imágenes del contenedor. Cuando se descargue dentro de la carpeta `piccoling-whit-docker`, tendremos las siguientes subcarpetas 
 
@@ -243,134 +238,117 @@ En el docker-compose se definen las imagenes de cada uno de los servicios y los 
 
 #### 2. /db:
 
-##### Mongodb:<br>
-Es una imagen ya construida y disponible en Docker Hub de la base de datos mongodb, a la cual, se le aplico volumenes con el fin de copiar la data en archivos .json dentro de contenedor, ya que necesitaremos que la conexion de mongo con los demas servicios se expuso el puerto 27017, cabe recalcar que este servicio solo podra ser ejecuta dentro de la maquina de 'servidorUbuntu'.<br>
+##### init.sql:<br>
+Es una imagen ya construida y disponible en Docker Hub de la base de datos MySQL. A esta imagen se le aplicaron volúmenes para copiar los datos en archivos .json dentro del contenedor. La conexión con los microservicios se expone a través del puerto 32000. Cabe recalcar que este servicio solo puede ser ejecutado en la máquina 'servidorPiccoling'.<br>
 <br>
 ```
 version: '3'
-
+networks:
+  cluster_piccoling_default:
 services:
-    mongodb:
-        image: mongo:4.0
-        restart: always
-        container_name: mongodb
-        volumes:
-            - ./mongo/data:/data/db
-            - ./flights.json:/json/flights.json
-            - ./users.json:/json/users.json
-            - ./flight_stats.json:/json/flight_stats.json
-        ports:
-            - 27017:27017
-```
-Aqui creamos el contenedor de mongo sacado de dockerhub, al cual le aplicaremos volumenes con los archivos .json, los cuales deben de estar dentro del contenedor.<br>
+  db:
+      image: mysql:5.7
+      ports:
+        - "32000:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: piccoling
+      volumes:
+        - ./db:/docker-entrypoint-initdb.d/:ro
+      deploy:
+        placement:
+          constraints:
+            - node.hostname == servidorPiccoling
 
-#### 3. /backend:
-Aqui se encuentran los 3 microservicios y el apigetway, para la creacion de la imagen de cada uno ellos se uso el mismo dockerfile, con una ligera diferencia como algunos parametros y lo mas importante el puerto por donde salen, pero en si tienen la misma estructura:<br>
-##### Dockerfile de los microservicios y apigateway
 ```
-FROM node:16
-WORKDIR /home/node/app
-COPY package*.json ./
-RUN npm install
-COPY .env ./
 
-RUN mkdir -p ./src
-COPY ./src ./src
-EXPOSE 3000
-CMD ["node", "./src/index.js"]
+#### 3. /microUsuarios , /microFacturas , microInventario:
+Estos son los tres microservicios disponibles. Para la creación de la imagen de cada uno de ellos, se utilizó el mismo Dockerfile con ligeras diferencias en algunos parámetros y, lo más importante, en el puerto que utilizan. No obstante, todos tienen una estructura muy similar:<br>
+##### Dockerfile de los microservicios (se coloca de ejemplo el usado en el microservicio de inventario)
+```
+FROM node:20
+
+WORKDIR /microInventario
+
+COPY src/controllers /microInventario/src/controllers
+COPY src/models /microInventario/src/models
+COPY src/index.js /microInventario/src
+
+RUN npm init --yes
+RUN npm install express morgan mysql mysql2 axios
+
+EXPOSE 3002
+
+CMD node src/index.js
 ```
 <br>
-Para ejecutar los microservicios de Blackbird, es necesario contar con Nodejs y descargar la librería de NPM. En el WORKDIR se especificará el directorio de trabajo y se copiarán los archivos package.json, que contienen las dependencias que se utilizarán, como Axios, el cual se encargará de monitorear los puertos no expuestos de los otros microservicios.
+Para ejecutar estos microservicios, es necesario contar con Node.js y descargar las librerías de NPM. En el WORKDIR se especificará el directorio y se copiarán los archivos package.json, que contienen las dependencias necesarias, como Axios, el cual se encargará de monitorear los puertos no expuestos de los otros microservicios.
 
-##### Apigateway:<br>
-Es el servicio encargado de tomar los puertos de cada uno de los microservicios (microuser, microairlines y microairports) ya que los microservicios no se comunican entre ellos, y con el fin de no exponer multiples puertos y su vez simplificar la obtencion de los datos, constrimos este apigateway para concentrar las multiples salidas de los 3 puertos en uno solo, que en este caso es el puerto 3000.
-
-##### Microuser:<br>
+##### Microusuarios:<br>
 Este es el microservicio encargado de controlar y autenticar a los usuarios que esten disponibles en la base de datos, estara conectado a la base de datos, y transmitiendo por el puerto 3001.
 
-##### MicroAirlines:<br>
-MicroAirlines es el microservicio encargado de gestionar la información relacionada con las aerolíneas y sus tablas de informacion, estara conectado a la base de datos y dependera del broker de mensajeria MQTT, y transmitiendo por el puerto 3002.
+##### MicroInventario:<br>
+Este microservicio es el encargado de gestionar la información relacionada con los platillos e ingredientes disponibles y sus tablas de información. Estará conectado a la base de datos y transmitirá a través del puerto 3002.
 
-##### MicroAirports:<br>
-MicroAirports cumple un papel similar a MicroAirlines, solo que su funcion esta dedicada unicamente a los aeropuertos, estara conectado a la base de datos y dependera del broker de mensajeria MQTT, y transmitiendo por el puerto 3003.<br>
+##### MicroFacturas:<br>
+Su función está dedicada únicamente a crear las facturas según lo solicitado por los usuarios. Estará conectado a la base de datos y a los demás microservicios, transmitiendo a través del puerto 3003.<br>
 
-#### 4. /app:
-App-1 es el servicio encargado de cargar la aplicacion web construida en Vuejs en su version de producción, y con el fin de usar haproxy y realizar el balanceo de carga, hemos realizado una copia de este servicio llamado App-2.<br>
-##### Dockerfile de app
+#### 4. /webPiccoling - app1:
+Este servicio se encarga de cargar la aplicación web construida en PHP en su versión de producción. Para utilizar HAProxy y realizar el balanceo de carga, hemos creado una copia de este servicio, llamada app2.<br>
+##### Dockerfile de webPicooling
 ```
-FROM ubuntu
-RUN apt update
-RUN apt install -y apache2
-RUN apt install -y apache2-utils
-RUN apt clean
-
-COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
-
-RUN mkdir -p /var/www/html/blackbird/dist
-
-COPY ./dist /var/www/html/blackbird/dist/
+FROM php:7.1-apache
+COPY . /var/www/html/webPiccoling
 EXPOSE 80
-CMD ["apache2ctl", "-D", "FOREGROUND"]
 ```
-En este punto se establecerán los parámetros necesarios para el funcionamiento de nuestra aplicación web. Para ello, se instalará el servidor de Apache (Apache2) y se copiará la configuración de nuestro sitio web dentro del contenedor de la imagen. Finalmente, se creará una carpeta dentro del contenedor que contendrá todos los archivos de nuestro sitio web creado con Vuejs.<br>
 
 #### 5. /haproxy:
-Haproxy sera el servicio encargado de balancear entre dos imagenes de nuestra app, permitiendonos tambien ver un informe detallado de el estado de cada una de ellas y el numero de peticiones ejecutadas.<br>
+HAProxy será el servicio encargado de balancear las cargas de la aplicación entre dos imágenes, permitiéndonos también ver un informe detallado del estado de cada una de ellas y del número de peticiones ejecutadas.<br>
 ##### Dockerfile de haproxy
 ```
 FROM haproxy:2.3
 RUN mkdir -p /run/haproxy/
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-COPY errors/503.http /usr/local/etc/haproxy/errors/503.http
 ```
-##### haproxy.cfg
-```
-backend web-backend
-   balance roundrobin
-   stats enable
-   stats auth admin:admin
-   stats uri /haproxy?stats
 
-   server app-1 app-1:80 check
-   server app-2 app-2:80 check
+Dentro de dockerfile de Haproxy le damos las intrucciones de usar haproxy:2.3, para despues crear el directorio `/run/haproxy` dentro del contenedor. Por ultimo realizamos la copia de dos archivos para la configuracion del haproxy.<br>
 
-frontend http
-  bind *:80
-  default_backend web-backend
-```
-Dentro de dockerfile de Haproxy le damos las intrucciones de usar haproxy:2.3, para despues crear el directorio `/run/haproxy` dentro del contenedor. Por ultimo realizamos la copia de dos archivos, uno para la configuracion del haproxy y el otro para una pagina personalizada del error 503.<br>
+
+
+
+
+
+
+CAMBIAR ESTO POR EL BROKER QUE VAYAMOS A USAR
 
 #### 6. /mqtt:
 MQTT es el broker de mensajeria escogio para ser de intermediario entre nuestra app y el framework de computación distribuida y procesamiento de datos, Apache Spark, encargado de escuchar los topics por donde se transmitiran los datos que luego se convertiran el consultas de PySpark.<br>
 
-##### docker-compose de mqtt
-```
-version: '3'
+ AYUDAAAAAAAAAAAAA
 
-services:
-  mqtt:
-    image: eclipse-mosquitto
-    restart: always
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-    ports:
-      - 1883:1883
-      - 9001:9001
-```
-En este docker-compose al igual que con el de mongodb, hacemos uso de los volumenes para copiar los archivos de configuración de mqtt.<br>
-#### 7. /spark_app
+#### 7. /PiccoData
+
+
+
+
 Aqui es donde se encuentran los scripts de pyspark para realizar el procesamiento distribuido, uno de ellos es `bbs71_etl.py` encargado de realizar la extración, limpieza y carga del dataset de kaggle y `bbs71_stream.py` encargado de hacer el procesamiento en streaming de Apache Spark, tambien esta sera la carpeta en donde se almacenara el dataset de kaggle `Combined_Flights_2021.csv` y en donde se guardaran posteriormente los .csv con los datos ya transformados.
 
+
+
+
+
+
 ## Guia
-A continuacion daremos el paso a seguir para desplegar de forma exitosa la app de Blackbird (Es recomendable ir preparando otras 2 ventana de cmd, una en la misma maquina de servidor y otra en cliente para realizar algunos pasos a la vez):<br>
+A continuación, proporcionamos los pasos a seguir para desplegar exitosamente la aplicación de Piccoling. Es recomendable preparar dos ventanas adicionales de cmd: una en la misma máquina del servidor y otra en el cliente, para realizar algunos pasos simultáneamente:<br>
 
-1. Lo primero sera descargar el respositirio de bbs71 en la terminal #1 servidorUbuntu:<br>
-`git clone https://github.com/SPinzon12/bbs71_git`<br>
+1. Lo primero sera descargar el respositirio 'piccoling-whit-docker' en la terminal #1 servidorPiccoling:<br>
+`git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
-2. Despues de esto nos dirigimos al directorio `bbs71_git/bbs71_docker`, y lo que haremos sera descargar el archivo flights.json y el dataset combined_flights_2021.csv que son demasiado pesados para git, lo haremos con el siguiente comando:<br>
+
+
+2. Despues de esto nos dirigimos al directorio `cd piccoling-whit-docker`, y lo que haremos sera descargar el archivo flights.json y el dataset dish.csv que son demasiado pesados para git, lo haremos con el siguiente comando:<br>
 `wget https://www.dropbox.com/s/npd87j2k5yxul2r/bbs71_data.zip`
+
+
 
 3. Lo siguiente sera descomprimir el archivo .zip con `unzip bbs71_data.zip`, al hacerlo nos dara 2 archivos `Combined_Flights_2021.csv` y `flights.json` los cuales tendremos que mover a directorios diferentes de la siguiente forma:<br>
 `mv Combined_Flights_2021.csv ./spark_app/` y `mv flights.json ./db/`<br>
