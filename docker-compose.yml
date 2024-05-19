@@ -84,5 +84,3 @@ services:
         constraints:
           - node.hostname == clientePiccoling
     init: true
-
-  

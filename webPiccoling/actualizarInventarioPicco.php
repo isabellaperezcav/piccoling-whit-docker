@@ -33,20 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_inventario']) && is
 
     // Manejar la respuesta
     if ($response === false) {
-        echo "Error en la conexión";
     } else {
         // Verificar la respuesta para saber si la actualización fue exitosa
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode == 200) {
             header("Location:admin-inventarioPicco.php");
         } else {
-            echo "Error al actualizar la cantidad disponible: " . $response;
         }
     }
 
     // Cerrar la conexión cURL
     curl_close($ch);
 } else {
-    echo "Error: Se esperaba una solicitud POST con los datos necesarios";
 }
 ?>

@@ -49,10 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: admin-menuPicco.php?edit_success=true");
         exit; // Importante: detener la ejecución después de la redirección
     } else {
-        // Manejo del error
-        echo "Error al editar el menú";
-        // También puedes redirigir a una página de error si es necesario
-        // header("Location: error.php");
+    
     }
 
     // Cerrar la conexión cURL
