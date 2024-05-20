@@ -46,6 +46,9 @@ if ($us == "") {
                     <li class="nav-item">
                         <a class="nav-link" href="admin-preparacionPicco.php">Relacion Menu-Inventario</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dash.php">dashboard</a>
+                    </li>
                 </ul>
                 <span class="navbar-text">
                     <?php echo "<a class='nav-link' href='logoutPicco.php'>Logout $us</a>"; ?>
