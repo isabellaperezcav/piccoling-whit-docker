@@ -108,7 +108,7 @@ EOF
 `wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz`
 6. Y lo descomprimimos:<br>
 `tar -xvzf spark-3.5.1-bin-hadoop3.tgz`
-7. Luego entramos a `/labSpark/spark-3.3.1-bin-hadoop3/conf` y hacemos una copia del archivo de configuración:<br>
+7. Luego entramos a `/labSpark/spark-3.5.1-bin-hadoop3/conf` y hacemos una copia del archivo de configuración:<br>
 `cp spark-env.sh.template spark-env.sh`<br>
 Y introducimos estas instrucciones:<br>
 En servidorPiccoling:<br>
@@ -144,45 +144,51 @@ A continuación, proporcionamos los pasos a seguir para desplegar exitosamente l
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
-2. Despues de esto nos dirigimos al directorio `cd piccoling-whit-docker`,
+2. vamos a descargar el dataset y lo colocamos en /labSpark
 
-
-
-y lo que haremos sera descargar el archivo flights.json y el dataset dish.csv que son demasiado pesados para git, lo haremos con el siguiente comando:<br>
-`wget https://www.dropbox.com/s/npd87j2k5yxul2r/bbs71_data.zip`
-
-
-
-4. Lo siguiente sera descomprimir el archivo .zip con `unzip bbs71_data.zip`, al hacerlo nos dara 2 archivos `Combined_Flights_2021.csv` y `flights.json` los cuales tendremos que mover a directorios diferentes de la siguiente forma:<br>
-`mv Combined_Flights_2021.csv ./spark_app/` y `mv flights.json ./db/`<br>
-
-5. Luego en `bbs71_docker/db` iniciamos el docker-compose de la base de datos de con el fin de subir los json:<br>
-`sudo docker compose up -d`<br>
-
-6. Una vez hecho esto, entraremos al contenedor de mongo con el fin de subir los archivos .json al cluster de mongo y para ello usaremos los comandos:<br> 
-Para visualizar el ID del contenedor usamos:<br>
-`sudo docker ps`<br>
-Deberia mostrarnos algo asi, y copiamos el `CONTAINER ID`:<br>
+   
+3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd labSpark/spark-3.5.1-bin-hadoop3/sbin`
+   En servidorPiccoling:<br>
 ```
-root@vagrant:~/bbs71_git/bbs71_docker/db# docker ps
-CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS         PORTS                                           NAMES
-8867c3571a3b   mongo:4.0   "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:27017->27017/tcp, :::27017->27017/tcp   mongodb
+./start-master.sh
 ```
-Ahora entramos en el contenedor:<br>
-`sudo docker exec -it <id del contenedor> /bin/bash`<br>
-Y navegamos al directorio `/json` y ejecutaremos los siguientes comandos para subirlos al cluster:<br>
-Estos comandos importan los archivos .json especificando el nombre de la base de datos, el nombre de la colección, el archivo y el tipo de archivo.<br>
-`mongoimport --db bbs71_db --collection flights --type json --file /json/flights.json --jsonArray`<br>
-`mongoimport --db bbs71_db --collection users --type json --file /json/users.json --jsonArray`<br>
-`mongoimport --db bbs71_db --collection flight_stats --type json --file /json/flight_stats.json --jsonArray`<br>
+En clientePiccoling:<br>
+```
+./start-worker.sh spark://192.168.100.4:7077
+```
+puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el browser<br>
 
-6. Una vez hecho esto ya podemos salir del contenedor con `exit` y ahora podemos detener el contenedor de mongo  con `sudo docker ps` para verlo y `sudo docker stop <id del contenedor>` para detenerlo.<br>
 
-7. Una vez cerremos el contenedor de mongo, nos dirigimos a `cd ../../labSpark/spark-3.4.0-bin-hadoop3/sbin` y iniciamos el master y el worker en la maquina de servidorUbuntu:<br>
-Master:<br>
-`./start-master.sh`<br>
-Worker:<br>
-`./start-worker.sh spark://192.168.100.2:7077`<br>
+
+4. Despues de esto, salimos de /sbin `cd ..` y entramos a bin `cd sbin`
+
+
+   
+5. Ejecutamos `` para corrrer la aplicacion que se encargara del analisis de nuestro dataset
+
+
+   
+7. .
+8. 
+
+
+
+
+
+
+3. Despues de esto vamos a crear un cluster de docker Swarm con un nodo corriendo en el servidor y otro en el cliente.<br>
+    En servidorPiccoling `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
+    En clientePiccoling vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
+
+4. Ejecutamos el stack (en el servidor) `docker stack deploy -c docker-compose.yml stack_piccoling`
+   si quiere verificarlo coloque `docker stack ps stack_piccoling`
+5. Escalaremos los servicios de la pag web `docker service scale stack_piccoling_web1=8` y `docker service scale stack_piccoling_web2=8`
+   si quiere verificarlo coloque `docker service ls`<br>
+
+
+
+
+
 
 8. Y luego nos dirigimos a `labSpark/spark-3.4.0-bin-hadoop3/bin` y una vez dentro ejecutamos el siguiente comando:<br>
 `./spark-submit --master spark://192.168.100.2:7077 /home/vagrant/bbs71_git/bbs71_docker/spark_app/bbs71_etl.py "/home/vagrant/bbs71_git/bbs71_docker/spark_app/Combined_Flights_2021.csv" "/home/vagrant/bbs71_git/bbs71_docker/spark_app/flights"`<br>
