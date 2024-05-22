@@ -338,25 +338,28 @@ Aqui es donde se encuentran los scripts de pyspark para realizar el procesamient
 
 
 ## Guia
-A continuación, proporcionamos los pasos a seguir para desplegar exitosamente la aplicación de Piccoling. Es recomendable preparar dos ventanas adicionales de cmd: una en la misma máquina del servidor y otra en el cliente, para realizar algunos pasos simultáneamente:<br>
+A continuación, proporcionamos los pasos a seguir para desplegar exitosamente la aplicación de Piccoling. Es recomendable preparar dos ventanas activas de cmd: una para el funcionamiento de la máquina del servidor y otra para el funcionamiento del cliente, esto para realizar algunos pasos simultáneamente:<br>
 
 1. Lo primero sera descargar el respositirio 'piccoling-whit-docker' en la terminal #1 servidorPiccoling:<br>
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
+2. Despues de esto nos dirigimos al directorio `cd piccoling-whit-docker`,
 
-2. Despues de esto nos dirigimos al directorio `cd piccoling-whit-docker`, y lo que haremos sera descargar el archivo flights.json y el dataset dish.csv que son demasiado pesados para git, lo haremos con el siguiente comando:<br>
+
+
+y lo que haremos sera descargar el archivo flights.json y el dataset dish.csv que son demasiado pesados para git, lo haremos con el siguiente comando:<br>
 `wget https://www.dropbox.com/s/npd87j2k5yxul2r/bbs71_data.zip`
 
 
 
-3. Lo siguiente sera descomprimir el archivo .zip con `unzip bbs71_data.zip`, al hacerlo nos dara 2 archivos `Combined_Flights_2021.csv` y `flights.json` los cuales tendremos que mover a directorios diferentes de la siguiente forma:<br>
+4. Lo siguiente sera descomprimir el archivo .zip con `unzip bbs71_data.zip`, al hacerlo nos dara 2 archivos `Combined_Flights_2021.csv` y `flights.json` los cuales tendremos que mover a directorios diferentes de la siguiente forma:<br>
 `mv Combined_Flights_2021.csv ./spark_app/` y `mv flights.json ./db/`<br>
 
-4. Luego en `bbs71_docker/db` iniciamos el docker-compose de la base de datos de con el fin de subir los json:<br>
+5. Luego en `bbs71_docker/db` iniciamos el docker-compose de la base de datos de con el fin de subir los json:<br>
 `sudo docker compose up -d`<br>
 
-5. Una vez hecho esto, entraremos al contenedor de mongo con el fin de subir los archivos .json al cluster de mongo y para ello usaremos los comandos:<br> 
+6. Una vez hecho esto, entraremos al contenedor de mongo con el fin de subir los archivos .json al cluster de mongo y para ello usaremos los comandos:<br> 
 Para visualizar el ID del contenedor usamos:<br>
 `sudo docker ps`<br>
 Deberia mostrarnos algo asi, y copiamos el `CONTAINER ID`:<br>
