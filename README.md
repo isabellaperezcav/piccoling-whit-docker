@@ -48,18 +48,37 @@ config.vm.define :clientePiccoling do |clientePiccoling|
  end
 end
 ```
+### Iniciar las maquinas virtuales:
+1. Prender las maquinas `vagrant up`
+2. abre 2 terminales de CMD, en una colocas `vagrant ssh servidorPiccoling`  y en la otra colocas `vagrant ssh clientePiccoling`
+3. Entra a las maquinas virtuales como un administrados `sudo -i`
+
+### NodeJS:
+Este lo usaremos unicamente en el servidorPiccoling
+
+1. Instalamos algunos paquetes:<br>
+`apt-get install curl gnupg2 gnupg -y`<br>
+2. Importamos el sig. repositorio para instalar nodejs:<br>
+`curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash`<br>
+3. Luego se procede con la instalación: `apt-get install nodejs`
+
+### MySQL:
+Este lo usaremos unicamente en el servidorPiccoling
+
+1. Para instalar mysql usamos el comando `apt-get install mysql-server`
+2. Se inicia el servicio con el comando `systemctl start mysql.service`
 
 ### Docker:
-Necesitaremos Docker en las 2 maquinas de servidorPiccoling y clientePiccoling.<br>
+Necesitaremos Docker en las 2 maquinas (servidorPiccoling y clientePiccoling).<br>
 1. Quitar versiones de docker anteriores:<br>
-`for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done`<br>
-y luego  `sudo apt-get update`
+```for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done```<br>
+
 2. Agregue la clave GPG oficial de docker:<br>
 ```
-sudo apt-get update / 
-sudo apt-get install ca-certificates curl/ 
-sudo install -m 0755 -d /etc/apt/keyrings /
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc /
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
  ```
  
@@ -73,12 +92,12 @@ sudo apt-get update
  ```
  
 4. Instale la ultima version de docker:<br>
-`sudo apt-get update`<br>
-`sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`
+`sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`<br>
+<br>
 ### docker-compose:
-Necesitaremos Docker-compose en las 2 maquinas de servidorPiccoling y clientePiccoling.<br>
-1. Instale DockerCompose:<br>
-`sudo apt-get install docker-compose-plugin`<br>
+Necesitaremos Docker-compose en las 2 maquinas (servidorPiccoling y clientePiccoling).<br>
+1. Verifique que tenga DockerCompose:<br>
+`docker compose version`<br>
 2. Cree el archivo ~/.vimrc para trabajar con Yaml:<br>
 `vim ~/.vimrc`<br>
 3. Agregar la siguiente configuración para trabajar conlos archivos yaml.<br>
@@ -90,8 +109,11 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 ```
 
 ### Apache Spark:
- 1. Instala paquetes de Java:<br>
-`sudo apt install -y openjdk-18-jdk`<br>
+Necesitaremos Apache Spark en las 2 maquinas (servidorPiccoling y clientePiccoling).<br>
+
+ 1. Actualiza el indice de paquetes e instala paquetes de Java:<br>
+ `apt update`
+`apt install -y openjdk-18-jdk`<br>
  2. Creamos el archivo jdk18.sh para la configuración:<br>
 ```
 cat <<EOF | sudo tee /etc/profile.d/jdk18.sh
@@ -108,9 +130,10 @@ EOF
 `wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz`
 6. Y lo descomprimimos:<br>
 `tar -xvzf spark-3.5.1-bin-hadoop3.tgz`
-7. Luego entramos a `/labSpark/spark-3.5.1-bin-hadoop3/conf` y hacemos una copia del archivo de configuración:<br>
+7. Luego entramos al directorio de configuración `cd spark-3.5.1-bin-hadoop3/conf/` y hacemos una copia del archivo de configuración de variables de entorno de Spark:<br>
 `cp spark-env.sh.template spark-env.sh`<br>
-Y introducimos estas instrucciones:<br>
+`vim spark-env.sh`
+Y al final del archivo introducimos estas instrucciones:<br>
 En servidorPiccoling:<br>
 ```
 SPARK_LOCAL_IP=192.168.100.4
@@ -120,19 +143,13 @@ En clientePiccoling:<br>
 ```
 SPARK_LOCAL_IP=192.168.100.5
 SPARK_MASTER_HOST=192.168.100.4
-```
-### Librerias:
-1. Editor de texto Vim:<br>
-`sudo apt-get install vim -y`<br>
-2. Zip y Unzip para descomprimir archivos:<br>
-`sudo apt-get install zip unzip -y`<br>
+``` 
+
 ### Pip y librerias de Python:
 1. Instalamos PIP y Python:<br>
 `sudo apt-get install python3`<br>
 `sudo apt-get install pip`
-2. Instalamos la libreria MySQL:<br>
-`sudo apt install mysql-server`
-3. Instalamos la libreria de PySpark:<br>
+2. Instalamos la libreria de PySpark:<br>
 `sudo pip install pyspark`
 
 
