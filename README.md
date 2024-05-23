@@ -192,10 +192,8 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 8. 
 
 
-
-
-
-
+2. Luego en piccoling-whit-docker/ iniciamos el docker-compose de la aplicación: 
+`sudo docker compose up -d`
 3. Despues de esto vamos a crear un cluster de docker Swarm con un nodo corriendo en el servidor y otro en el cliente.<br>
     En servidorPiccoling `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
     En clientePiccoling vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
