@@ -163,7 +163,7 @@ A continuación, proporcionamos los pasos a seguir para desplegar exitosamente l
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
-2. vamos a descargar el dataset y lo colocamos en /labSpark
+2. vamos a mover el dataset a la carpeta /labSpark `mv dish.csv /root/labSpark`
 
    
 3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd labSpark/spark-3.5.1-bin-hadoop3/sbin`
@@ -179,7 +179,7 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 
 
-4. Despues de esto, salimos de /sbin `cd ..` y entramos a bin `cd sbin`
+4. Despues de esto, salimos de /sbin `cd ..` y entramos a bin `cd bin`
 
 
    
@@ -199,8 +199,8 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
     En servidorPiccoling `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
     En clientePiccoling vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
 
-4. Ejecutamos el stack (en el servidor) `docker stack deploy -c docker-compose.yml stack_piccoling`
-   si quiere verificarlo coloque `docker stack ps stack_piccoling`
+4. Ejecutamos el stack (en el servidor) dentro de la carpeta del proyecto (`cd piccoling-whit-docker/`) con el sig comando`docker stack deploy -c docker-compose.yml stack_piccoling`
+   si quiere verificarlo coloque `docker service ps stack_piccoling`
 5. Escalaremos los servicios de la pag web `docker service scale stack_piccoling_web1=8` y `docker service scale stack_piccoling_web2=8`
    si quiere verificarlo coloque `docker service ls`<br>
 
