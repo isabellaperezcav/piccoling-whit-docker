@@ -42,10 +42,12 @@ config.vm.define :clientePiccoling do |clientePiccoling|
     servidorPiccoling.vm.network :private_network, ip: "192.168.100.4"
     servidorPiccoling.vm.hostname = "servidorPiccoling"
     servidorPiccoling.vm.box_download_insecure=true
- v.cpus = 3
- v.memory = 2048
- end
- end
+  servidorPiccoling.vm.provider "virtualbox" do |v|
+    v.cpus = 3
+    v.memory = 2048
+    end
+  end
+
 end
 ```
 ### Iniciar las maquinas virtuales:
