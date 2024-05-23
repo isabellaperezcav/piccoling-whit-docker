@@ -16,8 +16,6 @@ CREATE TABLE usuarios (
   clave VARCHAR(50)
 );
 
-INSERT INTO usuarios (nombrecompleto, correo, usuario, clave) VALUES ('Administrador', 'administrador@piccoling.com', 'admin', '1234');
-
 CREATE TABLE inventario (
   id_inventario INT AUTO_INCREMENT,
   ingrediente VARCHAR(100),
@@ -43,6 +41,7 @@ CREATE TABLE preparacion (
 
 
 INSERT INTO usuarios (nombrecompleto, correo, usuario, clave) VALUES
+('Administrador', 'administrador@piccoling.com', 'admin', '1234'),
 ('Eamon Hause', 'ehause0@digg.com', 'ehause0', '26-7788533'),
 ('Siobhan Tillman', 'stillman1@imgur.com', 'stillman1', '90-2167294'),
 ('Jamison Cast', 'jcast2@cdbaby.com', 'jcast2', '95-9844903'),
@@ -280,45 +279,4 @@ INSERT INTO facturas (nombreCliente, emailCliente, totalCuenta, fecha) VALUES
 ('Penny Fewell', 'pfewellj@mtv.com', 21830000000.00, '2023-07-15T00:00:00.000Z'),
 ('Hubert Caseborne', 'hcasebornek@psu.edu', 17140000000.00, '2024-03-04T00:00:00.000Z'),
 ('Eddie Toyer', 'etoyerl@reddit.com', 999980000.00, '2023-10-06T00:00:00.000Z'),
-('Irina Hellwig', 'ihellwigm@japanpost.jp', 1050000000.00, '2024-04-05T00:00:00.000Z'),
-('Carroll Fieller', 'cfiellern@census.gov', NULL, '2023-07-01T00:00:00.000Z'),
-('Kaine Saladino', 'ksaladinoo@theatlantic.com', 475230000.00, '2023-06-13T00:00:00.000Z'),
-('Brandie Spofforth', 'bspofforthp@photobucket.com', 57310000.00, '2023-05-24T00:00:00.000Z'),
-('Pavlov Willbond', 'pwillbondq@yolasite.com', 5410000000.00, '2023-09-29T00:00:00.000Z'),
-('Issie Cardenas', 'icardenasr@pagesperso-orange.fr', 73910000.00, '2023-07-06T00:00:00.000Z'),
-('Dita Culver', 'dculvers@over-blog.com', 3230000000.00, '2023-10-30T00:00:00.000Z'),
-('Elizabeth Tewkesbury', 'etewkesburyt@51.la', 1440000000.00, '2024-04-15T00:00:00.000Z'),
-('Jeffrey Scotchforth', 'jscotchforthu@cocolog-nifty.com', 53580000.00, '2023-05-25T00:00:00.000Z'),
-('Dione Millier', 'dmillierv@icq.com', 6600000000.00, '2023-08-24T00:00:00.000Z'),
-('Glenn Carbry', 'gcarbryw@blogger.com', 975870000.00, '2023-05-30T00:00:00.000Z'),
-('Nicki Grason', 'ngrasonx@yale.edu', 53830000.00, '2023-12-17T00:00:00.000Z'),
-('Tyrone Sorrell', 'tsorrelly@webeden.co.uk', 350570000.00, '2024-01-28T00:00:00.000Z'),
-('Kizzie Kull', 'kkullz@cargocollective.com', 2450000000.00, '2023-11-22T00:00:00.000Z'),
-('Sandy Rowledge', 'srowledge10@webs.com', 236630000.00, '2024-01-20T00:00:00.000Z'),
-('Yoshi Skinner', 'yskinner11@miitbeian.gov.cn', 330000000.00, '2023-06-19T00:00:00.000Z'),
-('Ken Salvadore', 'ksalvadore12@washingtonpost.com', 223070000.00, '2023-09-22T00:00:00.000Z'),
-('Renelle Parmenter', 'rparmenter13@wikia.com', 125850000.00, '2023-09-14T00:00:00.000Z'),
-('Chris Thurborn', 'cthurborn14@mashable.com', 1300000000.00, '2023-08-12T00:00:00.000Z'),
-('Pepito Durtnall', 'pdurtnall15@etsy.com', 4340000000.00, '2024-01-24T00:00:00.000Z'),
-('Rozella Stickens', 'rstickens16@diigo.com', 112590000.00, '2023-10-22T00:00:00.000Z'),
-('Hilliard Douce', 'hdouce17@domainmarket.com', 38810000.00, '2024-01-04T00:00:00.000Z'),
-('Jerome Dominguez', 'jdominguez18@bizjournals.com', 1110000000.00, '2024-01-23T00:00:00.000Z'),
-('Dee Notman', 'dnotman19@multiply.com', 417920000.00, '2024-03-29T00:00:00.000Z'),
-('Letti Chumley', 'lchumley1a@zimbio.com', 59590000.00, '2023-11-21T00:00:00.000Z'),
-('Trev McGruar', 'tmcgruar1b@github.com', NULL, '2024-02-14T00:00:00.000Z'),
-('Virginia Stubbington', 'vstubbington1c@merriam-webster.com', 11210000.00, '2024-04-13T00:00:00.000Z'),
-('Almire Davydochkin', 'adavydochkin1d@arstechnica.com', 79880000.00, '2023-12-19T00:00:00.000Z'),
-('Ealasaid Longstaffe', 'elongstaffe1e@bigcartel.com', NULL, '2024-04-13T00:00:00.000Z'),
-('Mac Haward', 'mhaward1f@icio.us', 12310000.00, '2023-09-28T00:00:00.000Z'),
-('Dorelle Nussgen', 'dnussgen1g@ucoz.com', 33920000.00, '2024-02-06T00:00:00.000Z'),
-('Ynez Boseley', 'yboseley1h@github.io', NULL, '2023-07-25T00:00:00.000Z'),
-('Wadsworth Mark', 'wmark1i@cam.ac.uk', NULL, '2023-12-06T00:00:00.000Z'),
-('Donnie Bollis', 'dbollis1j@techcrunch.com', NULL, '2023-05-09T00:00:00.000Z'),
-('Merwyn Mount', 'mmount1k@craigslist.org', 7540000000.00, '2023-09-08T00:00:00.000Z'),
-('Dorie Symper', 'dsymper1l@slideshare.net', 133850000.00, '2023-09-26T00:00:00.000Z'),
-('Querida Moreland', 'qmoreland1m@un.org', 2430000000.00, '2024-02-26T00:00:00.000Z'),
-('Ilse McGennis', 'imcgennis1n@t.co', 117990000000.00, '2023-12-07T00:00:00.000Z'),
-('Vittoria Garbar', 'vgarbar1o@yelp.com', NULL, '2024-01-19T00:00:00.000Z'),
-('Latrina Featenby', 'lfeatenby1p@diigo.com', 35540000.00, '2023-11-09T00:00:00.000Z'),
-('Tanhya Goves', 'tgoves1q@nps.gov', NULL, '2024-03-27T00:00:00.000Z'),
-('Berti Gomme', 'bgomme1r@elpais.com', 29610000.00, '2023-05-27T00:00:00.000Z');
+('Irina Hellwig', 'ihellwigm@japanpost.jp', 1050000000.00, '2024-04-05T00:00:00.000Z');
