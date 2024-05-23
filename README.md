@@ -153,6 +153,7 @@ SPARK_MASTER_HOST=192.168.100.4
 `sudo apt-get install pip`
 2. Instalamos la libreria de PySpark:<br>
 `sudo pip install pyspark`
+3. pip install pymysql
 
 
 
