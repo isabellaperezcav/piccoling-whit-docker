@@ -189,81 +189,73 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
    
 7. .
-8. 
 
 
-2. Luego en piccoling-whit-docker/ iniciamos el docker-compose de la aplicación: 
-`sudo docker compose up -d`
-3. Despues de esto vamos a crear un cluster de docker Swarm con un nodo corriendo en el servidor y otro en el cliente.<br>
+
+
+
+
+8. Luego nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
+`python3  datajson3.py`<br>
+
+Cuando termine nos debe generar un archivo `facturas.csv` en el directorio `/root/piccoling-whit-docker/db` con todos los datos de la tabla de facturas, resultado del archivo `datajson3.py`.<br>
+
+9. Ahora para correr la app realizaremos la conexion del Docker Swarm entre servidorPiccoling y clientePiccoli, lo haremos de la siguiente forma:
+Escribimos lo sigiente
     En servidorPiccoling `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
     En clientePiccoling vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
+En nuestro caso fue: <br>
+`docker swarm join --token SWMTKN-1-5utzgmlir7ttsj24t24lizz1manrn80tglx88r7nqnzpcv3eim-400llyufbblj2dpyszw4jfl2x 192.168.100.4:2377`
 
-4. Ejecutamos el stack (en el servidor) dentro de la carpeta del proyecto (`cd piccoling-whit-docker/`) con el sig comando`docker stack deploy -c docker-compose.yml stack_piccoling`
+
+10. Una vez hecho los pasos anteriores ahora si podemos desplegar la aplicación usando Docker Swarm, para ello nos devolvemos a  `/piccoling-whit-docker` donde se encuentra el archivo docker-compose.yml y lo ejecutamos usando Swarm:<br>
+`sudo docker stack deploy -c docker-compose.yml stack_piccoling`<br>
+este comando creará y ejecutará los contenedores de Docker necesarios para cada servicio especificado en el archivo docker-compose.yml y usara los recursos de ambas maquinas.<br>
    si quiere verificarlo coloque `docker service ps stack_piccoling`
-5. Escalaremos los servicios de la pag web `docker service scale stack_piccoling_web1=8` y `docker service scale stack_piccoling_web2=8`
+
+11. Escalaremos los servicios de la pag web `docker service scale stack_piccoling_web1=8` y `docker service scale stack_piccoling_web2=8`
    si quiere verificarlo coloque `docker service ls`<br>
 
+Por ultimo, realizaremos las pruebas de recoleccion de datos<br>
 
-
-
-
-
-8. Y luego nos dirigimos a `labSpark/spark-3.4.0-bin-hadoop3/bin` y una vez dentro ejecutamos el siguiente comando:<br>
-`./spark-submit --master spark://192.168.100.2:7077 /home/vagrant/bbs71_git/bbs71_docker/spark_app/bbs71_etl.py "/home/vagrant/bbs71_git/bbs71_docker/spark_app/Combined_Flights_2021.csv" "/home/vagrant/bbs71_git/bbs71_docker/spark_app/flights"`<br>
-(este proceso puede tardar un rato)<br>
-Cuando termine nos debe generar una carpeta `flights` en el directorio `bbs71_git/bbs71_docker/spark_app/` con todos los csv resultado `bbs71_etl.py`, como por ejemplo:<br>
+1. En el navegador colocaremos `http://192.168.100.4:5080/webPiccoling/index.html`, crearemos un usuario, entra con las credenciales de ese usario y realiza un pedido
+2. En la terminal de servidorPiccoling nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
+  `python3  datajson3.py`<br>
+Nos debe de salir: (te apareceran todos los datos de la tabla de facturas)<br>
 ```
-part-00000-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00009-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00001-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00010-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00002-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00011-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00003-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00012-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00004-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00013-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00005-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00014-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00006-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00015-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00007-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  part-00016-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv
-part-00008-4a73310c-a9aa-4590-9e8f-c260dbf2a0ee-c000.csv  _SUCCESS
-```
-
-9. Ahora para correr la app realizaremos la conexion del Docker Swarm entre servidorUbuntu y clienteUbuntu, y lo haremos de la siguiente forma:
-Escribimos este comando `sudo docker swarm init --advertise-addr 192.168.100.2` para iniciarlo y nos dara el siguiente comando con el token para realizar el enlace (si se te olvide puedes usar este `sudo docker swarm join-token worker`) y en la terminal de clienteUbuntu lo escribimos:<br> 
-En nuestro caso fue: <br>
-`sudo docker swarm join --token SWMTKN-1-4qt4bp8o1jeakj6xtgfsa62esrgb8mq6fyip25444653jv1c2b-cqdk5hl7yf17xi1a943ntw3zo 192.168.100.2:2377`
-
-10. Para agilizar la descarga de las imagenes, realizaremos un pull para asi descargarlas de dockerhub.
-```
-sudo docker pull bbs71/api-gateway
-sudo docker pull bbs71/micro-user
-sudo docker pull bbs71/micro-airlines
-sudo docker pull bbs71/micro-airports
-sudo docker pull bbs71/app
-sudo docker pull bbs71/haproxy
-sudo docker pull eclipse-mosquitto
-sudo docker pull mongo:4.0
+[
+    {
+        "id": 1,
+        "nombreCliente": "Corly Drieu",
+        "emailCliente": "cdrieu9@oracle.com",
+        "totalCuenta": "675371.01",
+        "fecha": "2024-05-24T00:03:28"
+    },
+    {
+        "id": 2,
+        "nombreCliente": "nico",
+        "emailCliente": "nico@picco.com",
+        "totalCuenta": "294864.71",
+        "fecha": "2024-05-24T00:06:00"
+    }
+]
+Datos guardados correctamente en /root/piccoling-whit-docker/db/facturas.csv
+Conexión exitosa a la página web
 ```
 
-11. Ya casi para finalizar una vez hecho los pasos anteriores ahora si ya podemos desplegar la aplicación entera usando Docker Swarm, para ello nos devolvemos a  `bbs71_git/bbs71_docker` donde se encuentra el archivo docker-compose.yml y lo ejecutamos usando Swarm:<br>
-`sudo docker stack deploy -c docker-compose.yml bbs71`<br>
-este comando creará y ejecutará los contenedores de Docker necesarios para cada servicio especificado en el archivo docker-compose.yml y usara los recursos de ambas maquinas.<br>
+13. Ya con todo corriendo y sabiendo como funciona la recoleccion de datos y como "alimenta" el dataset, nos dirigimos a nuestro navegador de preferencia y colocamos en la barra de busqueda la ip `192.168.100.4` con el puerto `5080` de Haproxy.
+    (si te sale "You don't have permission to access this resource", al lado del puerto coloca `/webPiccoling`)<br>
+te debe quedar asi 
+    `http://192.168.100.4:5080/webPiccoling/` <br>
 
-12. Por ultimo en la terminal #2 de servidorUbuntu nos dirigimos a `labSpark/spark-3.4.0-bin-hadoop3/bin` y una vez dentro ejecutamos el siguiente comando:<br>
-`./spark-submit --master spark://192.168.100.2:7077 /home/vagrant/bbs71_git/bbs71_docker/spark_app/bbs71_stream.py "/home/vagrant/bbs71_git/bbs71_docker/spark_app/flights/*csv"`<br>
-Nos debe de salir: <br>
-```
-Comenzando a leer los archivos CSV...
-Archivos CSV leídos correctamente.
-Conectado a la base de datos
-```
-
-13. Ya con todo corriendo nos dirigimos a nuestro navegador de preferencia y colocamos en la barra de busqueda la ip `192.168.100.2` con el puerto `1080` de Haproxy.
-
-14. Tambien podemos ver las estadisticas de haproxy accediendo por `192.168.100.2:1080/haproxy?stats`.<br>
+14. Tambien podemos ver las estadisticas de haproxy accediendo por `http://192.168.100.4:5080/haproxy?stats`.<br>
 Usuario:<br>
 `admin`<br>
 Contraseña:<br>
 `admin`<br>
 
 
- ## Configuración
+ ## Explicacion de la configuración
 Para configurar el contenedor Docker del proyecto, es necesario conocer los archivos Dockerfile que se han utilizado para crear las imágenes del contenedor. Cuando se descargue dentro de la carpeta `piccoling-whit-docker`, tendremos las siguientes subcarpetas 
 
 `webPiccoling` es la carpeta donde se encuentran los archivos de toda la pagina como HTML y PHP, en las carpetas que inician con`micro` tenemos todo lo relacionado con los microservicios y el apigateway, en la carpeta `db` tenemos lo correspondiente a la base de datos de sql, `/haproxy` donde esta nuestro balanceador, el archivo `docker-compose.yml` tenemos toda la configuracion para hacer el despliegue, 
