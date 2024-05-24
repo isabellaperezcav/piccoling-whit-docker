@@ -147,8 +147,8 @@ EOF
 3. Despues de este, hacemos:<br>
 `source /etc/profile.d/jdk18.sh`
 4. Crearemos el dictorio en donde guardaremos los archivos de Spark:<br>
-`mkdir labSpark`<br>
-`cd labSpark`
+`mkdir piccolabSpark`<br>
+`cd piccolabSpark`
 5. Descargamos el archivo comprimido de Spark:<br>
 `wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz`
 6. Y lo descomprimimos:<br>
@@ -185,10 +185,10 @@ A continuación, proporcionamos los pasos a seguir para desplegar exitosamente l
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
-2. vamos a mover el dataset a la carpeta /labSpark `mv dish.csv /root/labSpark`
+2. vamos a mover el dataset a la carpeta /piccolabSpark `mv dish.csv /root/piccolabSpark`
 
    
-3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd labSpark/spark-3.5.1-bin-hadoop3/sbin`
+3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd piccolabSpark/spark-3.5.1-bin-hadoop3/sbin`
    En servidorPiccoling:<br>
 ```
 ./start-master.sh
@@ -201,19 +201,28 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 
 
-4. Despues de esto, salimos de /sbin `cd` y entramos a bin `cd bin`
+4. Despues de esto, salimos de /sbin `cd` y nos vamos a piccoling-whit-docker, para esto colocamos `cd piccoling-whit-docker` <br>
 
 
    
-5. Ejecutamos `` para corrrer la aplicacion que se encargara del analisis de nuestro dataset
+5. Movemos la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `mv app /root/piccolabSpark`
+   alli encontraras 2 aplicaciones<br>
+   #app_picco.py:
+
+Carga un conjunto de datos CSV (dish.csv), filtra las filas donde ‘Precio’ y ‘Frecuencia_pedido’ no sean nulos, selecciona solo las filas con los campos requeridos, muestra los datos obtenidos, guarda los datos filtrados en un archivo, y finalmente detiene la sesión de Spark.<br>
+
+#picco_bro_acu.py:
+
+Esta inicializa una sesión de Spark, crea un diccionario de productos y lo transmite, crea un acumulador para cada campo en el diccionario, crea un RDD con los datos de los productos, aplica una función a cada producto del RDD para incrementar el acumulador correspondiente si el campo está en el diccionario, imprime el valor de cada acumulador, y finalmente detiene la sesión de Spark.<br>
+6. Para corrrer la aplicacion que se encargara del analisis/limpieza de nuestro dataset "dish.csv" nos dirigimos al directorio bin `cd /piccolabSpark/spark-3.5.1-bin-hadoop3/bin`
 
 
    
-7. .
-
-
-
-
+7. Inicia las aplicaciones con los comandos
+   ```
+./spark-submit --master spark://servidorPiccoling:7077 /root/piccolabSpark/app/app_picco.py
+./spark-submit --master spark://servidorPiccoling:7077 /root/piccolabSpark/app/picco_bro_acu.py
+   ```
 
 
 8. Luego nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
@@ -221,10 +230,10 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 Cuando termine nos debe generar un archivo `facturas.csv` en el directorio `/root/piccoling-whit-docker/db` con todos los datos de la tabla de facturas, resultado del archivo `piccodata.py`.<br>
 
-9. Ahora para correr la app realizaremos la conexion del Docker Swarm entre servidorPiccoling y clientePiccoli, lo haremos de la siguiente forma:
-Escribimos lo sigiente
-    En servidorPiccoling `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
-    En clientePiccoling vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
+9. Ahora para correr la app "piccoling" realizaremos la conexion del Docker Swarm entre servidorPiccoling y clientePiccoli, lo haremos de la siguiente forma:
+Escribimos lo sigiente<br>
+    En servidorPiccoling: `docker swarm init --advertise-addr 192.168.100.4`  , `docker swarm join-token worker`
+    En clientePiccoling: vamos a copiar el comando que salio al hacer `docker swarm join-token worker` en el servidor
 En nuestro caso fue: <br>
 `docker swarm join --token SWMTKN-1-5utzgmlir7ttsj24t24lizz1manrn80tglx88r7nqnzpcv3eim-400llyufbblj2dpyszw4jfl2x 192.168.100.4:2377`
 
