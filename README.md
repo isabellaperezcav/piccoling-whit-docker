@@ -69,7 +69,28 @@ Este lo usaremos unicamente en el servidorPiccoling
 
 1. Para instalar mysql usamos el comando `apt-get install mysql-server`
 2. Se inicia el servicio con el comando `systemctl start mysql.service`
+3. Ingresamos a mysql `mysql`
+4. Ejecutamos el siguiente comando para luego permitir cambiar el password a root
+   ```
+   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+   ```
+6. salimos del entorno de mysql `exit` , ejecutar el comando `mysql_secure_installation` para asegurar la instalación de mysql, (recuerde que el password que pusimos para root fue password)
+7. Como nuevo password vamos a colocar `piccoling`, colocamos `n` y e ahí en adelante a todas las preguntas les colocamos `y`
 
+Con esto ya queda instalado mysql de manera segura y con password "piccoling" para el usuario root<br>
+
+sigue los sig pasos:<br>
+```
+cd /piccoling-whit-docker/db
+mysql --host=127.0.0.1 --port=32000 -u root -p
+#Enter password: piccoling
+
+CREATE USER 'piccoling'@'%' IDENTIFIED BY 'piccoling';
+GRANT ALL PRIVILEGES ON . TO 'piccoling'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+exit
+
+```
 ### Docker:
 Necesitaremos Docker en las 2 maquinas (servidorPiccoling y clientePiccoling).<br>
 1. Quitar versiones de docker anteriores:<br>
@@ -180,7 +201,7 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 
 
-4. Despues de esto, salimos de /sbin `cd ..` y entramos a bin `cd bin`
+4. Despues de esto, salimos de /sbin `cd` y entramos a bin `cd bin`
 
 
    
