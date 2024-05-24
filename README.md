@@ -5,6 +5,9 @@ La aplicación está diseñada para ser utilizada por dos tipos de usuarios: Adm
 - Administrador: Puede ver la información detallada sobre los usuarios que consumen en sus instalaciones, manipular los platillos e ingredientes disponibles, y ver las facturas generadas.
 - Consumidor: Puede ver los platillos disponibles, la cantidad de estos, y realizar su orden sin necesidad de un intermediario. Piccoling permite a los consumidores obtener fácilmente una visión clara de lo que quieren pedir.
 
+- para visualizar de manera correcta las diapositivas del proyecto (ya que estas contienen videos), le sugerimos ir al sig enlace de canva
+  https://www.canva.com/design/DAGFCDI841M/C545rCjz84tuRtnrvk-2DA/edit?utm_content=DAGFCDI841M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ## Instalación
 Para el funcionamiento de este proyecto, utilizaremos Docker, una plataforma de contenedores que permite empaquetar una aplicación junto con todas sus dependencias en un contenedor virtualizado que se puede ejecutar en cualquier sistema operativo. También emplearemos Apache Spark para aprovechar su capacidad de procesamiento distribuido y su capacidad para manejar grandes conjuntos de datos.<br>
 Además, utilizaremos dos máquinas virtuales, ambas deberán tener instalados estos elementos.<br>
