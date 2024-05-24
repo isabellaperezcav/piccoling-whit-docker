@@ -185,7 +185,7 @@ A continuación, proporcionamos los pasos a seguir para desplegar exitosamente l
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
-2. vamos a mover el dataset a la carpeta /piccolabSpark `mv dish.csv /root/piccolabSpark`
+2. vamos a mover la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `mv app /root/piccolabSpark`
 
    
 3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd piccolabSpark/spark-3.5.1-bin-hadoop3/sbin`
@@ -201,11 +201,11 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 
 
-4. Despues de esto, salimos de /sbin `cd` y nos vamos a piccoling-whit-docker, para esto colocamos `cd piccoling-whit-docker` <br>
+4. Despues de esto, salimos de /sbin `cd` y nos vamos a la carpeta app, para esto colocamos `cd ..` en 2 ocasiones, lo cual nos dejara en /piccolabSpark, alli colocamos `cd app` <br>
 
 
    
-5. Movemos la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `mv app /root/piccolabSpark`
+5. vamos a la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `cd /root/piccolabSpark/app`
    alli encontraras 2 aplicaciones<br>
    #app_picco.py:
 
