@@ -196,9 +196,9 @@ puede verificar que esto fue correcto buscando `http://192.168.100.4:8080` en el
 
 
 8. Luego nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
-`python3  datajson3.py`<br>
+`python3  piccodata.py`<br>
 
-Cuando termine nos debe generar un archivo `facturas.csv` en el directorio `/root/piccoling-whit-docker/db` con todos los datos de la tabla de facturas, resultado del archivo `datajson3.py`.<br>
+Cuando termine nos debe generar un archivo `facturas.csv` en el directorio `/root/piccoling-whit-docker/db` con todos los datos de la tabla de facturas, resultado del archivo `piccodata.py`.<br>
 
 9. Ahora para correr la app realizaremos la conexion del Docker Swarm entre servidorPiccoling y clientePiccoli, lo haremos de la siguiente forma:
 Escribimos lo sigiente
