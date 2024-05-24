@@ -185,7 +185,7 @@ A continuación, proporcionamos los pasos a seguir para desplegar exitosamente l
 `git clone https://github.com/isabellaperezcav/piccoling-whit-docker`<br>
 
 
-2. vamos a mover la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `mv app /root/piccolabSpark`
+2. vamos a mover la carpeta "app" de nuestro directorio original (piccoling-whit-docker) y la colocaremos en /piccolabSpark, para esto ejecuta `mv app /root/piccolabSpark`<br>
 
    
 3. Despues de esto nos dirigimos al directorio donde descargamos pyspark y vamos a iniciar un master (en el servidor) y un worker (en el cliente) para tener acceso al dash `cd piccolabSpark/spark-3.5.1-bin-hadoop3/sbin`
@@ -214,15 +214,16 @@ Carga un conjunto de datos CSV (dish.csv), filtra las filas donde ‘Precio’ y
 #picco_bro_acu.py:
 
 Esta inicializa una sesión de Spark, crea un diccionario de productos y lo transmite, crea un acumulador para cada campo en el diccionario, crea un RDD con los datos de los productos, aplica una función a cada producto del RDD para incrementar el acumulador correspondiente si el campo está en el diccionario, imprime el valor de cada acumulador, y finalmente detiene la sesión de Spark.<br>
-6. Para corrrer la aplicacion que se encargara del analisis/limpieza de nuestro dataset "dish.csv" nos dirigimos al directorio bin `cd /piccolabSpark/spark-3.5.1-bin-hadoop3/bin`
+
+6. Para corrrer la aplicacion que se encargara del analisis/limpieza de nuestro dataset "dish.csv" nos dirigimos al directorio bin `cd /piccolabSpark/spark-3.5.1-bin-hadoop3/bin` <br>
 
 
    
-7. Inicia las aplicaciones con los comandos
-   ```
+7. Inicia las aplicaciones con los comandos <br>
+```
 ./spark-submit --master spark://servidorPiccoling:7077 /root/piccolabSpark/app/app_picco.py
 ./spark-submit --master spark://servidorPiccoling:7077 /root/piccolabSpark/app/picco_bro_acu.py
-   ```
+```
 
 
 8. Luego nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
@@ -250,7 +251,7 @@ Por ultimo, realizaremos las pruebas de recoleccion de datos<br>
 
 1. En el navegador colocaremos `http://192.168.100.4:5080/webPiccoling/index.html`, crearemos un usuario, entra con las credenciales de ese usario y realiza un pedido
 2. En la terminal de servidorPiccoling nos dirigimos a `/piccoling-whit-docker/db` y una vez dentro ejecutamos el siguiente comando:<br>
-  `python3  datajson3.py`<br>
+  `python3  piccodata.py`<br>
 Nos debe de salir: (te apareceran todos los datos de la tabla de facturas)<br>
 ```
 [
