@@ -3,11 +3,12 @@ from decimal import Decimal
 from datetime import datetime
 import pymysql.cursors
 import requests
+import csv
 
 # Datos de conexión a la base de datos
 host = '192.168.100.4'
 port = 32000
-user = 'piccoling'
+user = 'root'
 password = 'piccoling'
 database = 'piccoling'
 
@@ -28,6 +29,23 @@ def get_facturas_data(conn):
         result = cursor.fetchall()
     return result
 
+# Función para guardar los datos en un archivo CSV
+def save_data_to_csv(data, output_path):
+    if not data:
+        print("[INFO] No se encontraron datos para guardar en el CSV")
+        return
+
+    fieldnames = data[0].keys()
+    try:
+        with open(output_path, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in data:
+                writer.writerow(row)
+        print(f"Datos guardados correctamente en {output_path}")
+    except Exception as e:
+        print(f"Error al guardar datos en CSV: {e}")
+
 def main():
     connection = None  # Inicializa la variable connection fuera del bloque try
     try:
@@ -45,6 +63,10 @@ def main():
             # Imprime los datos en formato JSON
             json_data = json.dumps(data, cls=DecimalEncoder, indent=4)
             print(json_data)
+
+            # Guardar los datos en un archivo CSV
+            output_path = "/root/piccoling-whit-docker/db/facturas.csv"
+            save_data_to_csv(data, output_path)
         else:
             print("[INFO] No se encontraron datos en la tabla facturas")
 
@@ -68,3 +90,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
